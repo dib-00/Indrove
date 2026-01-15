@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>INDROV | Make India Rover</title>
+    <meta name="description" content="INDROV: Autonomous pipeline rover reducing costs, risks, and saving lives.">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- AOS Animation CSS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <!-- Markdown Parser -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                        },
+                        accent: {
+                            50: '#f0fdf4',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom Styles */
+        body {
+            background-color: #ffffff;
+            color: #1e293b;
+        }
+        
+        .hero-bg {
+            background: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7)), url('https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #0284c7 0%, #0ea5e9 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-scrolled {
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(8px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        /* Chat Widget Styles */
+        .chat-widget {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+
+        .chat-button {
+            width: 3.5rem;
+            height: 3.5rem;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0284c7 0%, #0ea5e9 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .chat-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .chat-window {
+            width: 350px;
+            height: 500px;
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 1rem;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            transform-origin: bottom right;
+            border: 1px solid #e2e8f0;
+        }
+
+        .chat-window.hidden {
+            display: none;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, #0284c7 0%, #0ea5e9 100%);
+            color: white;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 1rem;
+            overflow-y: auto;
+            background: #f8fafc;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 0.75rem;
+            border-radius: 0.75rem;
+            font-size: 0.875rem;
+            line-height: 1.4;
+        }
+
+        .message.user {
+            background: #0284c7;
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 0.25rem;
+        }
+
+        .message.ai {
+            background: white;
+            color: #1e293b;
+            align-self: flex-start;
+            border-bottom-left-radius: 0.25rem;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+        }
+
+        .message.ai p { margin-bottom: 0.5rem; }
+        .message.ai p:last-child { margin-bottom: 0; }
+        .message.ai ul { list-style-type: disc; margin-left: 1.25rem; margin-bottom: 0.5rem; }
+        .message.ai strong { font-weight: 600; }
+
+        .chat-input-area {
+            padding: 1rem;
+            background: white;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .chat-input {
+            flex: 1;
+            border: 1px solid #cbd5e1;
+            border-radius: 9999px;
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .chat-input:focus {
+            border-color: #0284c7;
+        }
+
+        .send-button {
+            width: 2.25rem;
+            height: 2.25rem;
+            border-radius: 50%;
+            background: #0284c7;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .send-button:hover {
+            background: #0369a1;
+        }
+        
+        .typing-indicator span {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            background-color: #94a3b8;
+            border-radius: 50%;
+            animation: typing 1s infinite ease-in-out;
+            margin: 0 2px;
+        }
+        
+        .typing-indicator span:nth-child(1) { animation-delay: 0s; }
+        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+        
+        @keyframes typing {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-4px); }
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-brand-100 selection:text-brand-900">
+
+    <!-- Navigation -->
+    <nav id="navbar" class="fixed w-full z-50 transition-all duration-300 py-6 bg-white/50 backdrop-blur-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-12">
+                <div class="flex-shrink-0 flex items-center gap-2">
+                    <div class="flex items-center gap-2">
+                         <img src="Document/logo.png" alt="INDROV Logo" class="h-10 w-auto">
+                    </div>
+
+                    <span class="font-bold text-2xl tracking-tight text-slate-800">INDROV</span>
+                </div>
+                <div class="hidden md:flex space-x-8 items-center">
+                    <a href="#vision" class="text-slate-600 hover:text-brand-600 font-medium transition-colors">Vision</a>
+                    <a href="#problem" class="text-slate-600 hover:text-brand-600 font-medium transition-colors">Problem</a>
+                    <a href="#solution" class="text-slate-600 hover:text-brand-600 font-medium transition-colors">Solution</a>
+                    <a href="#market" class="text-slate-600 hover:text-brand-600 font-medium transition-colors">Market</a>
+                    <a href="#team" class="text-slate-600 hover:text-brand-600 font-medium transition-colors">Team</a>
+                    <a href="#invest" class="px-5 py-2.5 rounded-full bg-brand-600 text-white font-semibold hover:bg-brand-700 transition-all shadow-lg shadow-brand-500/30">Invest Now</a>
+                </div>
+                <!-- Mobile menu button -->
+                <div class="md:hidden flex items-center">
+                    <button onclick="document.getElementById('mobile-menu').classList.toggle('hidden')" class="text-slate-600 hover:text-slate-900 focus:outline-none">
+                        <i class="fa-solid fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-100 absolute w-full">
+            <div class="px-4 pt-2 pb-6 space-y-2 shadow-lg">
+                <a href="#vision" class="block px-3 py-2 text-base font-medium text-slate-700 hover:bg-gray-50 rounded-md">Vision</a>
+                <a href="#problem" class="block px-3 py-2 text-base font-medium text-slate-700 hover:bg-gray-50 rounded-md">Problem</a>
+                <a href="#solution" class="block px-3 py-2 text-base font-medium text-slate-700 hover:bg-gray-50 rounded-md">Solution</a>
+                <a href="#market" class="block px-3 py-2 text-base font-medium text-slate-700 hover:bg-gray-50 rounded-md">Market</a>
+                <a href="#team" class="block px-3 py-2 text-base font-medium text-slate-700 hover:bg-gray-50 rounded-md">Team</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="vision" class="hero-bg min-h-screen flex items-center relative overflow-hidden">
+        <div class="absolute inset-0 bg-white/40"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 pt-20">
+            <div class="max-w-3xl" data-aos="fade-up" data-aos-duration="1000">
+                <div class="inline-block px-4 py-1.5 rounded-full bg-brand-100 text-brand-800 font-semibold text-sm mb-6 border border-brand-200">
+                    <i class="fa-solid fa-flag-checkered mr-2"></i> Make India Rover
+                </div>
+                <h1 class="text-5xl md:text-7xl font-extrabold text-slate-900 leading-tight mb-6">
+                    INDROV: A New Version of <span class="gradient-text">India's Industrial Health</span>
+                </h1>
+                <p class="text-xl md:text-2xl text-slate-700 mb-10 leading-relaxed font-light">
+                    A safer, smarter India through autonomous pipeline rovers reducing costs, risks, downtime, and saving lives with clean technology.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <a href="#solution" class="inline-flex justify-center items-center px-8 py-4 border border-transparent text-lg font-medium rounded-lg text-white bg-brand-600 hover:bg-brand-700 shadow-xl shadow-brand-500/20 transition-all transform hover:-translate-y-1">
+                        Explore Solution
+                    </a>
+                    <a href="#invest" class="inline-flex justify-center items-center px-8 py-4 border-2 border-slate-200 text-lg font-medium rounded-lg text-slate-700 bg-white hover:bg-slate-50 transition-all">
+                        View Unit Economics
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Scroll Indicator -->
+        <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce">
+            <a href="#problem" class="text-slate-400 hover:text-brand-600 transition-colors">
+                <i class="fa-solid fa-arrow-down text-2xl"></i>
+            </a>
+        </div>
+    </section>
+
+    <!-- Problem Statement -->
+    <section id="problem" class="py-24 bg-white relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16" data-aos="fade-up">
+                <h2 class="text-3xl font-bold text-slate-900 mb-4">The Silent Crisis in Our Pipes</h2>
+                <p class="text-lg text-slate-600 max-w-2xl mx-auto">India's industrial arteries are clogged. The economic cost is staggering, but the human cost is unacceptable.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+                <!-- Stat 1 -->
+                <div class="stat-card p-8 rounded-2xl bg-slate-50 border border-slate-100 text-center transition-all duration-300" data-aos="fade-up" data-aos-delay="0">
+                    <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fa-solid fa-indian-rupee-sign text-2xl text-red-600"></i>
+                    </div>
+                    <div class="text-4xl font-bold text-slate-900 mb-2">₹<span class="counter" data-target="1000">0</span> Cr+</div>
+                    <p class="text-sm text-slate-500 uppercase tracking-wide font-semibold">Annual Maintenance Cost</p>
+                    <p class="mt-4 text-slate-600 text-sm">Across urban and industrial sectors due to inefficient cleaning methods.</p>
+                </div>
+
+                <!-- Stat 2 -->
+                <div class="stat-card p-8 rounded-2xl bg-slate-50 border border-slate-100 text-center transition-all duration-300" data-aos="fade-up" data-aos-delay="100">
+                    <div class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fa-solid fa-chart-line-down text-2xl text-orange-600"></i>
+                    </div>
+                    <div class="text-4xl font-bold text-slate-900 mb-2"><span class="counter" data-target="40">0</span>%</div>
+                    <p class="text-sm text-slate-500 uppercase tracking-wide font-semibold">Efficiency Loss</p>
+                    <p class="mt-4 text-slate-600 text-sm">Suffered by Oil & Gas, Chemical, and Food Processing pipelines due to scaling.</p>
+                </div>
+
+                <!-- Stat 3 -->
+                <div class="stat-card p-8 rounded-2xl bg-slate-50 border border-slate-100 text-center transition-all duration-300" data-aos="fade-up" data-aos-delay="200">
+                    <div class="w-16 h-16 bg-slate-900 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fa-solid fa-skull-crossbones text-2xl text-white"></i>
+                    </div>
+                    <div class="text-4xl font-bold text-slate-900 mb-2"><span class="counter" data-target="100">0</span>+</div>
+                    <p class="text-sm text-slate-500 uppercase tracking-wide font-semibold">Deaths Annually</p>
+                    <p class="mt-4 text-slate-600 text-sm">From manual sewer cleaning and pipeline maintenance ("Manual Scavenging").</p>
+                </div>
+            </div>
+
+            <div class="bg-red-50 rounded-2xl p-8 border border-red-100" data-aos="fade-in">
+                <h3 class="text-xl font-bold text-red-800 mb-4"><i class="fa-solid fa-triangle-exclamation mr-2"></i> Current Challenges</h3>
+                <ul class="grid grid-cols-1 md:grid-cols-2 gap-4 text-red-900/80">
+                    <li class="flex items-start"><i class="fa-solid fa-xmark mt-1 mr-3 text-red-500"></i> Sewer systems in Mumbai, Delhi, Kolkata blocked by plastic and sediment.</li>
+                    <li class="flex items-start"><i class="fa-solid fa-xmark mt-1 mr-3 text-red-500"></i> Industrial pipelines facing severe scaling, corrosion, and debris accumulation.</li>
+                    <li class="flex items-start"><i class="fa-solid fa-xmark mt-1 mr-3 text-red-500"></i> 72.7% of wastewater goes untreated due to lack of mechanized solutions.</li>
+                    <li class="flex items-start"><i class="fa-solid fa-xmark mt-1 mr-3 text-red-500"></i> Manual cleaning is hazardous, inefficient, and cannot reach deep sections.</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Solution Section -->
+    <section id="solution" class="py-24 bg-brand-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col lg:flex-row gap-16 items-center">
+                
+                <div class="lg:w-1/2" data-aos="fade-right">
+                    <div class="inline-block px-4 py-1 rounded-full bg-white text-brand-600 font-semibold text-sm mb-4 border border-brand-200">
+                        Proposed Solution
+                    </div>
+                    <h2 class="text-4xl font-bold text-slate-900 mb-6">Introducing INDROV: <br>The Intelligent Rover</h2>
+                    <p class="text-lg text-slate-700 mb-8 leading-relaxed">
+                        A compact, modular in-pipe rover that locates and clears blockages using adaptive mechanical cutters, onboard sensing, and semi-autonomous control.
+                    </p>
+                    
+                    <div class="space-y-6">
+                        <div class="flex gap-4">
+                            <div class="flex-shrink-0 w-12 h-12 rounded-lg bg-white flex items-center justify-center text-brand-600 shadow-sm">
+                                <i class="fa-solid fa-arrows-up-down-left-right"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-lg font-bold text-slate-900">Adaptive Design</h4>
+                                <p class="text-slate-600">Lead screw-driven expansion arms allow navigation in pipes from 7 to 12 inches.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <div class="flex-shrink-0 w-12 h-12 rounded-lg bg-white flex items-center justify-center text-brand-600 shadow-sm">
+                                <i class="fa-solid fa-shield-heart"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-lg font-bold text-slate-900">Safety First</h4>
+                                <p class="text-slate-600">Wired control ensures safe operation and reliable recovery. Eliminates human entry.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <div class="flex-shrink-0 w-12 h-12 rounded-lg bg-white flex items-center justify-center text-brand-600 shadow-sm">
+                                <i class="fa-solid fa-industry"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-lg font-bold text-slate-900">Multi-Domain</h4>
+                                <p class="text-slate-600">Engineered for industrial pipelines, municipal drainage, and borewell rescue.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:w-1/2" data-aos="fade-left">
+                    <div class="relative rounded-2xl overflow-hidden shadow-2xl border-4 border-white">
+                        <img src="https://images.unsplash.com/photo-1531746790731-6c087fecd65a?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Robotics Prototype" class="w-full h-auto object-cover">
+                        <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-8">
+                            <div class="flex gap-2 mb-2">
+                                <span class="bg-brand-500/80 text-white text-xs px-2 py-1 rounded">Robotics</span>
+                                <span class="bg-purple-500/80 text-white text-xs px-2 py-1 rounded">AI</span>
+                                <span class="bg-orange-500/80 text-white text-xs px-2 py-1 rounded">IoT</span>
+                            </div>
+                            <h3 class="text-white text-xl font-bold">Industrial Rover for Blockage Removal (IRBR)</h3>
+                            <p class="text-slate-200 text-sm mt-1">Design & Fabrication | Intelligent Inspection</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Market & USP -->
+    <section id="market" class="py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="text-center mb-16" data-aos="fade-up">
+                <h2 class="text-3xl font-bold text-slate-900">Market Opportunity & USP</h2>
+                <p class="text-slate-500 mt-2">Positioned at the intersection of a 100M market and national strategic priorities.</p>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-20">
+                <div class="p-6 bg-slate-50 rounded-xl text-center" data-aos="zoom-in" data-aos-delay="0">
+                    <div class="text-3xl font-extrabold text-brand-600 mb-1">₹1000+ Cr</div>
+                    <div class="text-sm font-medium text-slate-600">Annual Market Size</div>
+                </div>
+                <div class="p-6 bg-slate-50 rounded-xl text-center" data-aos="zoom-in" data-aos-delay="100">
+                    <div class="text-3xl font-extrabold text-brand-600 mb-1">13.1%</div>
+                    <div class="text-sm font-medium text-slate-600">CAGR Growth</div>
+                </div>
+                <div class="p-6 bg-slate-50 rounded-xl text-center" data-aos="zoom-in" data-aos-delay="200">
+                    <div class="text-3xl font-extrabold text-accent-500 mb-1">100%</div>
+                    <div class="text-sm font-medium text-slate-600">Safety Improvement</div>
+                </div>
+                <div class="p-6 bg-slate-50 rounded-xl text-center" data-aos="zoom-in" data-aos-delay="300">
+                    <div class="text-3xl font-extrabold text-brand-600 mb-1">75%</div>
+                    <div class="text-sm font-medium text-slate-600">Time Reduction</div>
+                </div>
+            </div>
+
+            <!-- USP Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-20">
+                <div class="bg-brand-900 text-white rounded-2xl p-8 md:p-12 flex flex-col justify-center" data-aos="fade-right">
+                    <h3 class="text-2xl font-bold mb-4">Why INDROV?</h3>
+                    <p class="text-brand-100 mb-6 text-lg">
+                        "A compact, modular in-pipe rover that eliminates hazardous human entry into pipelines by combining adaptive mechanical cutters, real-time inspection, and semi-autonomous control."
+                    </p>
+                    <div class="space-y-3">
+                        <div class="flex items-center">
+                            <i class="fa-solid fa-check-circle text-accent-500 mr-3"></i>
+                            <span>Aligned with Swachh Bharat & Smart Cities</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fa-solid fa-check-circle text-accent-500 mr-3"></i>
+                            <span>Cuts downtime from days to hours</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fa-solid fa-check-circle text-accent-500 mr-3"></i>
+                            <span>Reduces maintenance costs by 30-50%</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" data-aos="fade-left">
+                    <div class="bg-white border border-slate-200 p-6 rounded-xl hover:shadow-lg transition-shadow">
+                        <i class="fa-solid fa-hard-hat text-3xl text-orange-500 mb-4"></i>
+                        <h4 class="font-bold text-lg mb-2">Industrial Sector</h4>
+                        <p class="text-sm text-slate-600">Oil & Gas, Chemical, and Food processing plants seeking reduced downtime.</p>
+                    </div>
+                    <div class="bg-white border border-slate-200 p-6 rounded-xl hover:shadow-lg transition-shadow">
+                        <i class="fa-solid fa-city text-3xl text-brand-500 mb-4"></i>
+                        <h4 class="font-bold text-lg mb-2">Municipal Sector</h4>
+                        <p class="text-sm text-slate-600">Supporting urban bodies with sewer and drainage cleaning.</p>
+                    </div>
+                    <div class="bg-white border border-slate-200 p-6 rounded-xl hover:shadow-lg transition-shadow">
+                        <i class="fa-solid fa-life-ring text-3xl text-red-500 mb-4"></i>
+                        <h4 class="font-bold text-lg mb-2">Rescue Ops</h4>
+                        <p class="text-sm text-slate-600">Capable of borewell rescue operations due to modular design.</p>
+                    </div>
+                    <div class="bg-white border border-slate-200 p-6 rounded-xl hover:shadow-lg transition-shadow">
+                        <i class="fa-solid fa-expand text-3xl text-purple-500 mb-4"></i>
+                        <h4 class="font-bold text-lg mb-2">Scalable</h4>
+                        <p class="text-sm text-slate-600">Modular design allows tool upgrades (brushes, Al cameras, air blowers).</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Competitive Analysis Table -->
+            <div class="overflow-x-auto rounded-2xl border border-slate-200 shadow-sm" data-aos="fade-up">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-50 border-b border-slate-200">
+                            <th class="p-4 font-bold text-slate-700">Factor</th>
+                            <th class="p-4 font-bold text-red-600 bg-red-50/50">Legacy Manual Labor</th>
+                            <th class="p-4 font-bold text-brand-700 bg-brand-50/50">INDROV Solution</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-sm">
+                        <tr class="border-b border-slate-100">
+                            <td class="p-4 font-semibold text-slate-900">Safety</td>
+                            <td class="p-4 text-slate-600">Extremely hazardous; 100+ deaths annually.</td>
+                            <td class="p-4 text-slate-900 font-medium bg-brand-50/30">Eliminates human entry; Zero risk.</td>
+                        </tr>
+                        <tr class="border-b border-slate-100">
+                            <td class="p-4 font-semibold text-slate-900">Cost / KM</td>
+                            <td class="p-4 text-slate-600">₹1.0L - ₹1.5L</td>
+                            <td class="p-4 text-slate-900 font-medium bg-brand-50/30">₹40,000 - ₹60,000</td>
+                        </tr>
+                        <tr class="border-b border-slate-100">
+                            <td class="p-4 font-semibold text-slate-900">Resolution Time</td>
+                            <td class="p-4 text-slate-600">Hours to Days</td>
+                            <td class="p-4 text-slate-900 font-medium bg-brand-50/30">Minutes to Hours</td>
+                        </tr>
+                        <tr>
+                            <td class="p-4 font-semibold text-slate-900">National Savings</td>
+                            <td class="p-4 text-slate-600">--</td>
+                            <td class="p-4 text-slate-900 font-medium bg-brand-50/30">Potential to save ₹300-₹500 Cr annually.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Funding & Economics -->
+    <section id="invest" class="py-24 bg-slate-900 text-white relative overflow-hidden">
+        <!-- Background accents -->
+        <div class="absolute top-0 right-0 w-64 h-64 bg-brand-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20"></div>
+        <div class="absolute bottom-0 left-0 w-64 h-64 bg-accent-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center mb-16" data-aos="fade-up">
+                <span class="text-brand-400 font-bold tracking-wider uppercase text-sm">Investment Opportunity</span>
+                <h2 class="text-4xl md:text-5xl font-bold mt-2 mb-6">Funding Ask: ₹50,00,000</h2>
+                <p class="text-slate-300 max-w-2xl mx-auto">Seed funding required for MVP finalization, Pilot deployment, and Scale-up across 3 target cities.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
+                
+                <!-- Unit Economics -->
+                <div class="bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/10" data-aos="fade-right">
+                    <h3 class="text-2xl font-bold mb-6 flex items-center"><i class="fa-solid fa-coins mr-3 text-yellow-400"></i> Unit Economics</h3>
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-end border-b border-white/10 pb-2">
+                            <span class="text-slate-300">Manufacturing Cost</span>
+                            <span class="font-mono font-bold">₹1,80,000</span>
+                        </div>
+                        <div class="flex justify-between items-end border-b border-white/10 pb-2">
+                            <span class="text-slate-300">Packaging & Logistics</span>
+                            <span class="font-mono font-bold">₹20,000</span>
+                        </div>
+                        <div class="flex justify-between items-end border-b border-white/10 pb-2">
+                            <span class="text-slate-300">After-Sales Support</span>
+                            <span class="font-mono font-bold">₹15,000</span>
+                        </div>
+                        <div class="flex justify-between items-end pt-2 text-xl font-bold text-accent-400">
+                            <span>Total Cost Per Unit</span>
+                            <span>₹2,15,000</span>
+                        </div>
+                        <div class="mt-6 p-4 bg-brand-600/20 rounded-lg text-center border border-brand-500/30">
+                            <p class="text-sm text-brand-200 uppercase tracking-wide">Target Retail Price</p>
+                            <p class="text-2xl font-bold text-white">₹3.5L - ₹4.0L</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Revenue Projections -->
+                <div class="bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/10" data-aos="fade-left">
+                    <h3 class="text-2xl font-bold mb-6 flex items-center"><i class="fa-solid fa-chart-line mr-3 text-accent-400"></i> Revenue Projections</h3>
+                    <div class="space-y-6">
+                        <!-- Year 1 -->
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="font-bold">Year 1</span>
+                                <span class="text-sm text-slate-300">₹3.5 Cr Revenue</span>
+                            </div>
+                            <div class="w-full bg-slate-700 rounded-full h-4">
+                                <div class="bg-brand-500 h-4 rounded-full" style="width: 15%"></div>
+                            </div>
+                            <div class="text-xs text-slate-400 mt-1">100 Units Sold | ₹1.35 Cr Gross Profit</div>
+                        </div>
+                        <!-- Year 2 -->
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="font-bold">Year 2</span>
+                                <span class="text-sm text-slate-300">₹10.5 Cr Revenue</span>
+                            </div>
+                            <div class="w-full bg-slate-700 rounded-full h-4">
+                                <div class="bg-brand-500 h-4 rounded-full" style="width: 45%"></div>
+                            </div>
+                            <div class="text-xs text-slate-400 mt-1">300 Units Sold | ₹4.05 Cr Gross Profit</div>
+                        </div>
+                        <!-- Year 3 -->
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="font-bold">Year 3</span>
+                                <span class="text-sm text-slate-300">₹28 Cr Revenue</span>
+                            </div>
+                            <div class="w-full bg-slate-700 rounded-full h-4">
+                                <div class="bg-brand-500 h-4 rounded-full" style="width: 90%"></div>
+                            </div>
+                            <div class="text-xs text-slate-400 mt-1">800 Units Sold | ₹10.8 Cr Gross Profit</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Roadmap -->
+    <section class="py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-bold text-center mb-16 text-slate-900" data-aos="fade-up">12-Month Roadmap</h2>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 relative">
+                <!-- Connecting Line (Desktop) -->
+                <div class="hidden md:block absolute top-8 left-0 w-full h-1 bg-slate-100 -z-10"></div>
+
+                <!-- Phase 1 -->
+                <div class="bg-white p-6 rounded-xl border border-slate-100 shadow-sm text-center" data-aos="fade-up" data-aos-delay="0">
+                    <div class="w-16 h-16 bg-brand-100 text-brand-600 rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold ring-8 ring-white">1</div>
+                    <h3 class="font-bold text-lg mb-2">Months 1-3 (R&D)</h3>
+                    <p class="text-sm text-slate-600">Finalize design, simulation, and advanced prototyping.</p>
+                </div>
+
+                <!-- Phase 2 -->
+                <div class="bg-white p-6 rounded-xl border border-slate-100 shadow-sm text-center" data-aos="fade-up" data-aos-delay="100">
+                    <div class="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold ring-8 ring-white">2</div>
+                    <h3 class="font-bold text-lg mb-2">Months 4-6 (Pilot)</h3>
+                    <p class="text-sm text-slate-600">Field testing in municipal pipelines with key partners.</p>
+                </div>
+
+                <!-- Phase 3 -->
+                <div class="bg-white p-6 rounded-xl border border-slate-100 shadow-sm text-center" data-aos="fade-up" data-aos-delay="200">
+                    <div class="w-16 h-16 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold ring-8 ring-white">3</div>
+                    <h3 class="font-bold text-lg mb-2">Months 7-9 (MVP)</h3>
+                    <p class="text-sm text-slate-600">Refine final product based on pilot feedback.</p>
+                </div>
+
+                <!-- Phase 4 -->
+                <div class="bg-white p-6 rounded-xl border border-slate-100 shadow-sm text-center" data-aos="fade-up" data-aos-delay="300">
+                    <div class="w-16 h-16 bg-accent-100 text-accent-600 rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold ring-8 ring-white">4</div>
+                    <h3 class="font-bold text-lg mb-2">Months 10-12 (Scale)</h3>
+                    <p class="text-sm text-slate-600">Commercial deployment in Kolkata, Pune, Ahmedabad.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Team Section -->
+    <section id="team" class="py-24 bg-slate-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16" data-aos="fade-up">
+                <h2 class="text-3xl font-bold text-slate-900">Leadership Team</h2>
+                <p class="text-slate-600 mt-2">Expertise in Advanced Manufacturing, Robotics, and Operations.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Team 1 -->
+                <div class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-shadow" data-aos="fade-up" data-aos-delay="0">
+                    <div class="h-32 bg-gradient-to-r from-brand-500 to-blue-600"></div>
+                    <div class="px-6 pb-6 -mt-12 text-center">
+                        <img src="Document/somnath das.png" alt="CEO" class="w-24 h-24 rounded-full border-4 border-white mx-auto shadow-md bg-white">
+                        <h3 class="mt-4 text-xl font-bold text-slate-900">Dr. Somnath Das</h3>
+                        <p class="text-brand-600 font-medium text-sm mb-4">CEO</p>
+                        <p class="text-slate-600 text-sm mb-4">M.E. & Ph.D. from Jadavpur University. 15 Years Exp in Robotics, Automation, & 3D Printing.</p>
+                        <div class="border-t pt-4">
+                           <span class="text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded">Advanced Manufacturing</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Team 2 -->
+                <div class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-shadow" data-aos="fade-up" data-aos-delay="100">
+                    <div class="h-32 bg-gradient-to-r from-blue-600 to-indigo-600"></div>
+                    <div class="px-6 pb-6 -mt-12 text-center">
+                        <img src="Document/koushik mishra.jpg" alt="Director R&D" class="w-24 h-24 rounded-full border-4 border-white mx-auto shadow-md bg-white">
+                        <h3 class="mt-4 text-xl font-bold text-slate-900">Dr. Koushik Mishra</h3>
+                        <p class="text-brand-600 font-medium text-sm mb-4">Director, R&D</p>
+                        <p class="text-slate-600 text-sm mb-4">M.E. & Ph.D. from Jadavpur University. 11 Years Exp in Electrochemical Milling & Metamaterials.</p>
+                        <div class="border-t pt-4">
+                           <span class="text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded">Modelling & Simulation</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Team 3 -->
+                <div class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-shadow" data-aos="fade-up" data-aos-delay="200">
+                    <div class="h-32 bg-gradient-to-r from-indigo-600 to-purple-600"></div>
+                    <div class="px-6 pb-6 -mt-12 text-center">
+                        <img src="Document/nilanjan roy.png" alt="Director Technical" class="w-24 h-24 rounded-full border-4 border-white mx-auto shadow-md bg-white">
+                        <h3 class="mt-4 text-xl font-bold text-slate-900">Dr. Nilanjan Roy</h3>
+                        <p class="text-brand-600 font-medium text-sm mb-4">Director, Technical</p>
+                        <p class="text-slate-600 text-sm mb-4">M.E. & Ph.D. from Jadavpur University. 18 Years Exp in Laser Machining & Ops Research.</p>
+                        <div class="border-t pt-4">
+                           <span class="text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded">Operation Research</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer / Closing -->
+    <footer class="bg-slate-900 text-white pt-16 pb-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 mb-12">
+                <div>
+                    <div class="flex items-center gap-2 mb-6">
+                        <img src="Document/logo.png" alt="INDROV Logo" class="h-10 w-auto">
+                        <span class="font-bold text-2xl tracking-tight">INDROV</span>
+                    </div>
+                    <p class="text-slate-400 max-w-sm mb-6">
+                        Engineering a Safer, More Efficient Future for India. An automated step towards Atmanirbhar Bharat and Viksit Bharat 2047.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center hover:bg-brand-600 transition-colors"><i class="fa-brands fa-linkedin-in"></i></a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center hover:bg-brand-600 transition-colors"><i class="fa-brands fa-twitter"></i></a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center hover:bg-brand-600 transition-colors"><i class="fa-regular fa-envelope"></i></a>
+                    </div>
+                </div>
+                <div class="text-right flex flex-col items-start md:items-end justify-center">
+                    <h3 class="text-xl font-bold mb-2">Join us in revolutionising infrastructure</h3>
+                    <p class="text-slate-400 mb-6">Saving lives, one pipeline at a time.</p>
+                    <button class="bg-brand-600 hover:bg-brand-700 text-white px-6 py-3 rounded-lg font-medium transition-all">Contact Us</button>
+                </div>
+            </div>
+            <div class="border-t border-slate-800 pt-8 text-center text-slate-500 text-sm">
+                <p>&copy; 2026 INDROV. All rights reserved. | Patent ID: 202241048547</p>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Gemini Chat Widget -->
+    <div class="chat-widget">
+        <div class="chat-window hidden" id="chatWindow">
+            <div class="chat-header">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-robot"></i>
+                    <span class="font-semibold">INDROV AI Assistant</span>
+                </div>
+                <button onclick="toggleChat()" class="text-white/80 hover:text-white"><i class="fa-solid fa-times"></i></button>
+            </div>
+            <div class="chat-messages" id="chatMessages">
+                <div class="message ai">
+                    <p>Hello! I'm the INDROV AI Assistant. Ask me anything about our pipeline rover, market opportunity, or investment details.</p>
+                </div>
+            </div>
+            <div class="chat-input-area">
+                <input type="text" id="userInput" class="chat-input" placeholder="Type your question..." onkeypress="handleKeyPress(event)">
+                <button onclick="sendMessage()" class="send-button">
+                    <i class="fa-solid fa-paper-plane text-sm"></i>
+                </button>
+            </div>
+        </div>
+        <div class="chat-button" onclick="toggleChat()">
+            <i class="fa-solid fa-message text-xl"></i>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        // Initialize AOS Animation
+        AOS.init({
+            once: true,
+            offset: 100,
+            duration: 800,
+            easing: 'ease-out-cubic',
+        });
+
+        // Navbar Scroll Effect
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 20) {
+                navbar.classList.add('nav-scrolled', 'shadow-md');
+                navbar.classList.remove('py-6');
+                navbar.classList.add('py-4');
+            } else {
+                navbar.classList.remove('nav-scrolled', 'shadow-md', 'py-4');
+                navbar.classList.add('py-6');
+            }
+        });
+
+        // Number Counter Animation
+        const counters = document.querySelectorAll('.counter');
+        const observerOptions = {
+            root: null,
+            threshold: 0.5
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const counter = entry.target;
+                    const target = +counter.getAttribute('data-target');
+                    const duration = 2000; // 2 seconds
+                    const increment = target / (duration / 16);
+                    
+                    let current = 0;
+                    const updateCounter = () => {
+                        current += increment;
+                        if (current < target) {
+                            counter.innerText = Math.ceil(current);
+                            requestAnimationFrame(updateCounter);
+                        } else {
+                            counter.innerText = target;
+                        }
+                    };
+                    updateCounter();
+                    observer.unobserve(counter);
+                }
+            });
+        }, observerOptions);
+
+        counters.forEach(counter => {
+            observer.observe(counter);
+        });
+
+        // Gemini AI Integration
+        const chatWindow = document.getElementById('chatWindow');
+        const chatMessages = document.getElementById('chatMessages');
+        const userInput = document.getElementById('userInput');
+        const apiKey = ""; // Set by environment
+
+        const systemPrompt = `
+You are the AI Sales Engineer for INDROV (Make India Rover). You are professional, knowledgeable, and investor-focused.
+Answer questions based strictly on the following pitch deck data. Keep answers concise (2-3 sentences max unless details are requested).
+
+CONTEXT DATA:
+- **Vision:** A safer, smarter India through INDROV: autonomous pipeline rover reducing costs, risks, downtime, and saving lives.
+- **Problem:** India loses Rs 1,000+ Cr annually in pipeline maintenance. 30-40% efficiency loss in industrial pipelines. 100+ deaths annually from manual scavenging.
+- **Solution:** INDROV IRBR (Industrial Rover for Blockage Removal). Features: Lead screw-driven expansion arms (7-12 inch pipes), wired control for safety, multi-domain (industry, municipal, borewell rescue).
+- **USP:** Eliminates hazardous human entry (Safety First), cuts downtime from days to hours (Efficiency), Reduces cost by 30-50%. Aligned with Swachh Bharat & Smart Cities.
+- **Market:** Annual market Rs 1000+ Cr, CAGR 13.1%.
+- **Competition:** Cheaper than manual labor (Manual: 1-1.5L/km vs INDROV: 40k-60k/km). Better than competitors like Solinas or Bandicoot because INDROV does BOTH cleaning and inspection in one modular unit at a lower price point.
+- **Financials:** - Funding Ask: Rs 50,00,000 for MVP, Pilot, Scale-up.
+    - Unit Cost: Rs 2,15,000 (Mfg 1.8L + Packaging 20k + Support 15k).
+    - Retail Price: Rs 3.5L - 4.0L.
+    - Revenue Projections: Year 1: 3.5 Cr (100 units), Year 2: 10.5 Cr (300 units), Year 3: 28 Cr (800 units).
+- **Team:**
+    - Dr. Somnath Das (CEO): 15 Yrs exp in Robotics, Advanced Manufacturing.
+    - Dr. Koushik Mishra (Director R&D): 11 Yrs exp, Metamaterials.
+    - Dr. Nilanjan Roy (Director Tech): 18 Yrs exp, Laser Machining.
+
+If asked about something not in this data, politely say you don't have that information but can connect them with Dr. Somnath Das.
+Do not mention you are an AI model unless asked. Focus on selling the vision.
+`;
+
+        function toggleChat() {
+            chatWindow.classList.toggle('hidden');
+            if (!chatWindow.classList.contains('hidden')) {
+                userInput.focus();
+            }
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        async function sendMessage() {
+            const text = userInput.value.trim();
+            if (!text) return;
+
+            // Add User Message
+            addMessage(text, 'user');
+            userInput.value = '';
+            
+            // Add Typing Indicator
+            const loadingId = addTypingIndicator();
+
+            try {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{ text: text }]
+                        }],
+                        systemInstruction: {
+                            parts: [{ text: systemPrompt }]
+                        }
+                    })
+                });
+
+                const data = await response.json();
+                
+                // Remove typing indicator
+                document.getElementById(loadingId).remove();
+
+                if (data.error) {
+                    addMessage("I apologize, I'm having trouble connecting to the server right now. Please try again.", 'ai');
+                    console.error('Gemini API Error:', data.error);
+                } else {
+                    const aiResponse = data.candidates[0].content.parts[0].text;
+                    addMessage(aiResponse, 'ai');
+                }
+            } catch (error) {
+                document.getElementById(loadingId).remove();
+                addMessage("I apologize, I'm having trouble connecting right now. Please check your internet connection.", 'ai');
+                console.error('Network Error:', error);
+            }
+        }
+
+        function addMessage(text, sender) {
+            const div = document.createElement('div');
+            div.className = `message ${sender}`;
+            
+            if (sender === 'ai') {
+                // Parse simple markdown for AI responses
+                div.innerHTML = marked.parse(text);
+            } else {
+                div.textContent = text;
+            }
+            
+            chatMessages.appendChild(div);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function addTypingIndicator() {
+            const id = 'typing-' + Date.now();
+            const div = document.createElement('div');
+            div.id = id;
+            div.className = 'message ai typing-indicator';
+            div.innerHTML = '<span></span><span></span><span></span>';
+            chatMessages.appendChild(div);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            return id;
+        }
+    </script>
+</body>
+</html>
